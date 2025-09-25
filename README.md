@@ -1,15 +1,10 @@
-Moodle App
+Savio App
 =================
 
-This is the primary repository of source code for the official mobile app for Moodle.
+Este es el repositorio primario del codigo fuente de la app oficial para Savio
 
-* [User documentation](https://docs.moodle.org/en/Moodle_app)
-* [Developer documentation](https://moodledev.io/general/app)
-* [Development environment setup](https://moodledev.io/general/app/development/setup)
-* [Bug Tracker](https://tracker.moodle.org/browse/MOBILE)
-* [Release Notes](https://moodledev.io/general/app_releases)
-
-This project is tested with BrowserStack.
+* [Universidad Tecnologica de Bolivar](https://www.utb.edu.co/)
+* [Proyecto original](https://github.com/moodlehq/moodleapp)
 
 License
 -------
