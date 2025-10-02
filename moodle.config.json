@@ -1,5 +1,5 @@
 {
-    "app_id": "com.savio.appmobile",
+    "app_id": "com.moodle.moodlemobile",
     "appname": "Savio Mobile",
     "versioncode": 51000,
     "versionname": "5.1.0",
@@ -86,7 +86,7 @@
         "medium": 110,
         "high": 120
     },
-    "customurlscheme": "saviomobile",
+    "customurlscheme": "moodlemobile",
     "sites": [],
     "multisitesdisplay": "",
     "sitefindersettings": {},
