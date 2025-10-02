@@ -4,7 +4,7 @@
     "add": "Add",
     "agelocationverification": "Age and location verification",
     "ago": "{{$a}} ago",
-    "ajaxendpointnotfound": "AJAX endpoint not found. This can happen if the Moodle site is too old or it blocks access to this endpoint. The Moodle app only supports Moodle systems {{$a}} onwards.",
+    "ajaxendpointnotfound": "AJAX endpoint not found. This can happen if the Moodle site is too old or it blocks access to this endpoint. The Savio app only supports Moodle systems {{$a}} onwards.",
     "all": "All",
     "allgroups": "All groups",
     "allparticipants": "All participants",
