@@ -1,5 +1,5 @@
 {
-    "app_id": "com.moodle.moodlemobile",
+    "app_id": "com.utb.savioapp",
     "appname": "Savio Mobile",
     "versioncode": 51000,
     "versionname": "5.1.0",
@@ -101,7 +101,7 @@
     "showTopLogo": "hidden",
     "ioswebviewscheme": "moodleappfs",
     "appstores": {
-        "android": "com.moodle.moodlemobile",
+        "android": "com.utb.savioapp",
         "ios": "id633359593"
     },
     "wsrequestqueuelimit": 10,
