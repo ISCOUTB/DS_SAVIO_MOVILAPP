@@ -21,7 +21,6 @@ import {
     effect,
 } from '@angular/core';
 import { CoreUtils } from '@singletons/utils';
-import { CoreAnimations } from '@components/animations';
 import { Translate } from '@singletons';
 import { CoreDirectivesRegistry } from '@singletons/directives-registry';
 import { CorePromisedValue } from '@classes/promised-value';
@@ -56,7 +55,6 @@ import { CoreTimesPipe } from '@pipes/times';
     selector: 'core-loading',
     templateUrl: 'core-loading.html',
     styleUrl: 'loading.scss',
-    animations: [CoreAnimations.SHOW_HIDE],
     imports: [
         CoreBaseModule,
         CoreTimesPipe,
@@ -81,7 +79,6 @@ export class CoreLoadingComponent implements AsyncDirective, OnDestroy {
     readonly placeholderLimit = input(20);
 
     protected element: HTMLElement = inject(ElementRef).nativeElement;
-    protected lastScrollPosition = Promise.resolve<number | undefined>(undefined);
     protected onReadyPromise = new CorePromisedValue<void>();
     protected mutationObserver: MutationObserver;
 
@@ -117,12 +114,10 @@ export class CoreLoadingComponent implements AsyncDirective, OnDestroy {
         effect(() => {
             if (this.hideUntil()) {
                 this.onReadyPromise.resolve();
-                this.restoreScrollPosition();
                 if (CorePlatform.isIOS()) {
                     this.mutationObserver.observe(this.element, { childList: true });
                 }
             } else {
-                this.lastScrollPosition = this.getScrollPosition();
                 this.mutationObserver.disconnect();
             }
         });
@@ -133,32 +128,6 @@ export class CoreLoadingComponent implements AsyncDirective, OnDestroy {
      */
     ngOnDestroy(): void {
         this.mutationObserver.disconnect();
-    }
-
-    /**
-     * Gets current scroll position.
-     *
-     * @returns the scroll position or undefined if scroll not found.
-     */
-    protected async getScrollPosition(): Promise<number | undefined> {
-        const scrollElement = await this.getScrollElement();
-
-        return scrollElement?.scrollTop;
-    }
-
-    /**
-     * Restores last known scroll position.
-     */
-    protected async restoreScrollPosition(): Promise<void> {
-        const scrollPosition = await this.lastScrollPosition;
-
-        if (scrollPosition === undefined) {
-            return;
-        }
-
-        const scrollElement = await this.getScrollElement();
-
-        scrollElement?.scrollTo({ top: scrollPosition });
     }
 
     /**
