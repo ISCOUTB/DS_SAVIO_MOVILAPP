@@ -23,7 +23,7 @@ Configuración del entorno de compilación:
 * Configurar la version a usar de nodeJs:
   * nvm ls
   * Copiar el numero de version mas reciente
-  * nvm use numeroversion 
+  * nvm use numeroversion
 * Instalar todos los paquetes con: npm install
   * Por si acaso, ejecutar npx ionic, y presionar la tecla y para aceptar su instalacion
 * Instalar Android Studio y descargar el SDK con las platform tools, las build tools y command line tools. Opcionalmente, instalar el emulador
