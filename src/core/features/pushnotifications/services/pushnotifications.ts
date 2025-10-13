@@ -607,7 +607,8 @@ export class CorePushNotificationsProvider {
                         return;
                     }
 
-                    this.logger.log('Received a notification', notification);
+                    this.logger.log('Push: Notificación recibida', notification);
+                    alert('Push: Notificación recibida: ' + JSON.stringify(notification));
                     this.onMessageReceived(notification);
                 });
             });
@@ -616,12 +617,15 @@ export class CorePushNotificationsProvider {
                 // Execute the callback in the Angular zone, so change detection doesn't stop working.
                 NgZone.run(() => {
                     this.pushID = data.registrationId;
+                    this.logger.log('Push: Token registrado', data.registrationId);
+                    alert('Push: Token registrado: ' + data.registrationId);
                     if (!CoreSites.isLoggedIn() || !this.canRegisterOnMoodle()) {
                         return;
                     }
 
                     this.registerDeviceOnMoodle().catch((error) => {
                         this.logger.error('Can\'t register device', error);
+                        alert('Push: Error registrando dispositivo en Moodle: ' + error);
                     });
                 });
             });
@@ -630,11 +634,12 @@ export class CorePushNotificationsProvider {
                 // Execute the callback in the Angular zone, so change detection doesn't stop working.
                 NgZone.run(() => {
                     this.logger.warn('Error with Push plugin', error);
+                    alert('Push: Error con el plugin: ' + error);
                 });
             });
         } catch (error) {
             this.logger.warn(error);
-
+            alert('Push: Error general: ' + error);
             throw error;
         }
     }
