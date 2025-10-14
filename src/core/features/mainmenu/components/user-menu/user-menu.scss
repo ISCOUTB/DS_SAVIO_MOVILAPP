@@ -1,4 +1,17 @@
+
 @use "theme/globals" as *;
+.creadores-app-titulo {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-top: 12px;
+    margin-bottom: 4px;
+}
+.creadores-app-nombre {
+    text-align: center;
+    font-size: 1rem;
+    margin-bottom: 2px;
+}
 
 :host {
     .core-user-menu-separator {
