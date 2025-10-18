@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Component, OnInit, signal, Type, viewChild, WritableSignal } from '@angular/core';
+import { Component, effect, OnInit, signal, Type, viewChild, WritableSignal, OnDestroy, inject, ElementRef } from '@angular/core';
 
 import {
     CoreCourseOverview,
@@ -29,7 +29,7 @@ import { CoreTime } from '@singletons/time';
 import { CoreAnalytics, CoreAnalyticsEventType } from '@services/analytics';
 import { CoreAlerts } from '@services/overlays/alerts';
 import { CoreSharedModule } from '@/core/shared.module';
-import { ModFeature, ModArchetype } from '@addons/mod/constants';
+import { ModFeature, ModArchetype, ModPurpose, RESOURCE_ARCHETYPE_NAME } from '@addons/mod/constants';
 import { CoreCourseModuleHelper } from '@features/course/services/course-module-helper';
 import { Translate } from '@singletons';
 import { CoreUrl } from '@singletons/url';
@@ -39,7 +39,13 @@ import { CoreCourse } from '@features/course/services/course';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CoreScreen } from '@services/screen';
 import { map } from 'rxjs';
-import { CoreCourseOverviewContentType } from '@features/course/constants';
+import {
+    CORE_COURSE_OVERVIEW_OPTION_NAME,
+    CORE_COURSE_SELECT_TAB,
+    CoreCourseOverviewContentType,
+} from '@features/course/constants';
+import { CoreEventObserver, CoreEvents } from '@singletons/events';
+import { CoreDom } from '@singletons/dom';
 
 /**
  * Page that displays an overview of all activities in a course.
@@ -53,7 +59,7 @@ import { CoreCourseOverviewContentType } from '@features/course/constants';
         CoreSharedModule,
     ],
 })
-export default class CoreCourseOverviewPage implements OnInit {
+export default class CoreCourseOverviewPage implements OnInit, OnDestroy {
 
     readonly loaded = signal(false);
     readonly modTypes = signal<OverviewModType[]>([]);
@@ -63,8 +69,10 @@ export default class CoreCourseOverviewPage implements OnInit {
     readonly isTablet = toSignal(CoreScreen.layoutObservable.pipe(map(() => CoreScreen.isTablet)), { requireSync: true });
     protected courseId!: number;
     protected logView: () => void;
+    protected readonly autoExpand = signal<string[]>([]);
+    protected selectTabObserver: CoreEventObserver;
 
-    protected static readonly RESOURCES_NAME = 'resource';
+    protected hostElement: HTMLElement = inject(ElementRef).nativeElement;
 
     constructor() {
         this.logView = CoreTime.once(async () => {
@@ -77,6 +85,40 @@ export default class CoreCourseOverviewPage implements OnInit {
                 url: `/course/overview.php?id=${this.courseId}`,
             });
         });
+
+        effect(async () => {
+            const accordionGroup = this.accordionGroup();
+            const autoExpand = this.autoExpand();
+
+            if (accordionGroup && autoExpand) {
+                accordionGroup.value = autoExpand;
+
+                await this.modTypeAccordionChanged(autoExpand);
+
+                // Scroll to the first expanded mod type. when the accordion animation is done.
+                setTimeout(() => {
+                    const firstModType = autoExpand[0];
+                    CoreDom.scrollToElement(
+                        this.hostElement,
+                        `#${firstModType}_overview_collapsible`,
+                    );
+                }, 300);
+            }
+        });
+
+        // Listen for select course tab events to expand the right section if needed.
+        this.selectTabObserver = CoreEvents.on(CORE_COURSE_SELECT_TAB, (data) => {
+            if (data.selectedTab !== CORE_COURSE_OVERVIEW_OPTION_NAME) {
+                return;
+            }
+
+            if (!data.pageParams.expand) {
+                return;
+            }
+
+            const expand = data.pageParams.expand.split(',');
+            this.autoExpand.set(expand);
+        });
     }
 
     /**
@@ -85,6 +127,9 @@ export default class CoreCourseOverviewPage implements OnInit {
     async ngOnInit(): Promise<void> {
         try {
             this.courseId = CoreNavigator.getRequiredRouteParam('courseId');
+            const expand = CoreNavigator.getRouteParam('expand')?.split(',') || [];
+
+            this.autoExpand.set(expand);
         } catch (error) {
             CoreAlerts.showError(error);
             CoreNavigator.back();
@@ -110,6 +155,7 @@ export default class CoreCourseOverviewPage implements OnInit {
             const modIcons: Record<string, string> = {};
             let modFullNames: Record<string, string> = {};
             const brandedIcons: Record<string, boolean|undefined> = {};
+            const purposes: Record<string, ModPurpose | undefined> = {};
 
             const modules = CoreCourse.getSectionsModules(sections, {
                 ignoreSection: section => !CoreCourseHelper.canUserViewSection(section),
@@ -131,14 +177,15 @@ export default class CoreCourseOverviewPage implements OnInit {
                 // Get the full name of the module type.
                 if (archetypes[mod.modname] === ModArchetype.RESOURCE) {
                     // All resources are gathered in a single "Resources" option.
-                    if (!modFullNames[CoreCourseOverviewPage.RESOURCES_NAME]) {
-                        modFullNames[CoreCourseOverviewPage.RESOURCES_NAME] = Translate.instant('core.resources');
+                    if (!modFullNames[RESOURCE_ARCHETYPE_NAME]) {
+                        modFullNames[RESOURCE_ARCHETYPE_NAME] = Translate.instant('core.resources');
                     }
                 } else {
                     modFullNames[mod.modname] = mod.modplural;
                 }
 
                 brandedIcons[mod.modname] = mod.branded;
+                purposes[mod.modname] = mod.purpose;
 
                 // If this is not a theme image, leave it undefined to avoid having specific activity icons.
                 if (CoreUrl.isThemeImageUrl(mod.modicon)) {
@@ -150,7 +197,7 @@ export default class CoreCourseOverviewPage implements OnInit {
             modFullNames = CoreObject.sortValues(modFullNames);
 
             const modTypes = await Promise.all(Object.keys(modFullNames).map(async (modName): Promise<OverviewModType> => {
-                const iconModName = modName === CoreCourseOverviewPage.RESOURCES_NAME ? 'page' : modName;
+                const iconModName = modName === RESOURCE_ARCHETYPE_NAME ? 'page' : modName;
 
                 const icon = await CoreCourseModuleDelegate.getModuleIconSrc(iconModName, modIcons[iconModName]);
 
@@ -159,9 +206,10 @@ export default class CoreCourseOverviewPage implements OnInit {
                     iconModName,
                     name: modFullNames[modName],
                     modName,
-                    modNameTranslated: modName === CoreCourseOverviewPage.RESOURCES_NAME ?
+                    modNameTranslated: modName === RESOURCE_ARCHETYPE_NAME ?
                         modFullNames[modName] : CoreCourseModuleHelper.translateModuleName(modName, modFullNames[modName]),
                     branded: brandedIcons[iconModName],
+                    purpose: purposes[iconModName],
                     loaded: signal(false),
                     overview: signal<OverviewInformation | undefined>(undefined),
                 };
@@ -202,15 +250,18 @@ export default class CoreCourseOverviewPage implements OnInit {
     /**
      * An accordion has been expanded or collapsed.
      *
-     * @param modName Mod name that was expanded, undefined if collapsed and none expanded.
+     * @param modNames Array of the module names that are expanded, empty if all are collapsed.
+     * @returns Promise resolved when done.
      */
-    modTypeAccordionChanged(modName?: string): void {
-        const modType = modName && this.modTypes().find((modType) => modType.modName === modName);
-        if (!modType) {
-            return;
-        }
+    async modTypeAccordionChanged(modNames: string[] = []): Promise<void[]> {
+        return Promise.all(modNames.map(async (modName) => {
+            const modType = this.modTypes().find((modType) => modType.modName === modName);
+            if (!modType) {
+                return;
+            }
 
-        this.loadActivities(modType);
+            return this.loadActivities(modType);
+        }));
     }
 
     /**
@@ -378,6 +429,13 @@ export default class CoreCourseOverviewPage implements OnInit {
         });
     }
 
+    /**
+     * @inheritdoc
+     */
+    ngOnDestroy(): void {
+        this.selectTabObserver.off();
+    }
+
 }
 
 type OverviewModType = {
@@ -387,6 +445,7 @@ type OverviewModType = {
     iconModName: string;
     modNameTranslated: string;
     branded?: boolean;
+    purpose?: ModPurpose;
     loaded: WritableSignal<boolean>;
     overview: WritableSignal<OverviewInformation | undefined>;
 };
