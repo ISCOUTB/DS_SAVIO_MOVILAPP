@@ -8,9 +8,13 @@
  * Light Theme
  * -------------------------------------------
  */
-:root {
-    --core-header-toolbar-background: #093ad3;
-    --core-header-toolbar-color: #ffffff;
+:root, :root.dark {
+    --core-header-toolbar-background: #{$blue_utb};
+    --core-header-toolbar-color: white;
+
+    --core-bottom-tabs-background: #{$blue_utb};
+    --core-bottom-tabs-color: #{$medium_2};
+    --core-bottom-tabs-color-selected: white;
 }
 
 /*
@@ -18,7 +22,11 @@
  * -------------------------------------------
  */
 :root.dark {
-    --medium: #00fffd;
-    --core-header-toolbar-background: #093ad3;
+    --medium: #{$medium_2};
+    /*--core-header-toolbar-background: #{$blue_utb};
     --core-header-toolbar-color: #ffffff;
+
+    --core-bottom-tabs-background: #{$blue_utb};
+    --core-bottom-tabs-color: $medium_2;
+    --core-bottom-tabs-color-selected: #ffffff;*/
 }
