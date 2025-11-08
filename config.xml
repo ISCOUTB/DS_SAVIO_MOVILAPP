@@ -65,10 +65,10 @@
         <preference name="AndroidWindowSplashScreenIconBackgroundColor" value="#FFFFFF" />
         <resource-file src="google-services.json" target="app/google-services.json" />
         <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
-        <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application">
+        <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
             <application android:allowBackup="false" android:largeHeap="true" android:networkSecurityConfig="@xml/network_security_config" />
         </edit-config>
-        <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application/activity">
+        <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application/activity">
             <activity android:enableOnBackInvokedCallback="false" />
         </edit-config>
         <config-file parent="/manifest/application" target="AndroidManifest.xml">
