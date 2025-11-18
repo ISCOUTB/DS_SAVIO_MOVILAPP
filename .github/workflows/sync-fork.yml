@@ -1,7 +1,7 @@
 name: Sync upstream weekly
 on:
   schedule:
-    - cron: '35 3 * * *'   # semanal: domingo 00:00 UTC
+    - cron: '0 0 * * 0'   # Significa: A los 0 minutos, 0 horas, cualquier dia del mes, cualquier mes, solo los domingos
   workflow_dispatch: {}
 
 permissions:
