@@ -1,0 +1,38 @@
+name: Sync upstream weekly
+on:
+  schedule:
+    - cron: '35 3 * * *'   # semanal: domingo 00:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/moodlehq/moodleapp.git || true
+
+      - name: Fetch upstream
+        run: git fetch upstream
+
+      - name: Merge upstream/main into main
+        run: |
+          git checkout main
+          git merge --no-edit upstream/main
+
+      - name: Push to origin
+        run: git push origin main
