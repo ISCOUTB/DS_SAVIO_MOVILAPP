@@ -36,13 +36,53 @@ Configuración del entorno de compilación:
 * Descargar gradle: https://gradle.org/next-steps/?version=9.1.0&format=bin. Funciona tanto para Linux como para Windows
 * Descomprimir el archivo y añadir la carpeta bin al PATH
 * Configurar la memoria máxima que puede usar nodeJs: `echo 'export NODE_OPTIONS="--max-old-space-size=capacity"' >> ~/.bashrc` , donde `capacity` debe ser 4096 mínimo, es decir, 4GB de RAM. Se recomienda el valor de 8192, es decir, 8GB.
-* Compilar con `npm run prod:android`
+* Compilar para Android con `npm run prod:android`
 
 En Windows: se debe usar el git bash, pues en CMD o PowerShell no funcionará el comando de compilación debido a que los scripts de npm usan la sintaxis de bash.
 
 También se debe configurar que los scripts de npm se ejecuten con bash, lo cual se puede hacer con: `npm config set script-shell "C:\\Program Files\\git\\bin\\bash.exe"`. Solo es necesario hacerlo una vez.
 
 Si hay algun error con las versiones de los paquetes, actualizarlos con: `npm update`
+
+
+Actualizar la rama del fork con los commits del repositorio original
+===========================
+
+Para realizar esta acción pueden darse dos casos:
+
+## Caso 1: No hay conflictos
+En este caso, lo único que hay que hacer es, desde la interfaz de GitHub, hacer clic sobre "Sync Fork" y después en "Update Branch". Al hacerlo, se hará un merge instantáneo de los commits del upstream (repositorio original) en el fork.
+
+<img width="818" height="316" alt="syncfork" src="https://github.com/user-attachments/assets/ad82feb0-d066-45eb-9bfb-dec5479aa681" />
+
+## Caso 2: Hay conflictos que solucionar
+Si al hacer clic sobre "Sync Fork" aparece un mensaje "This branch has conflicts that must be resolved" significa que algunos commits del upstream están haciendo conflicto con los del fork, por lo que es necesario especificar como se debe llevar a cabo el merge. En este caso, la única solución posible es usar la consola de comandos junto con el editor de código.
+
+Los pasos para resolver el conflicto en Visual Studio Code fueron los siguientes:
+
+* Primero, creamos un branch de prueba, para probar el merge antes de llevarlo al branch: `git checkout -b prueba utb`
+* A continuación, se obtienen los cambios hechos en el repositorio original: `git pull https://github.com/moodlehq/moodleapp main --no-rebase`
+
+Ahora, como se ve en la siguiente imagen, aparecerán archivos en conflicto, en color rojo y marcados con un signo de exclamación !. Los archivos en amarillo con una M al lado son aquellos que se modificaron pero no presentan conflictos:
+
+<img width="326" height="133" alt="Screenshot from 2025-10-12 14-46-13" src="https://github.com/user-attachments/assets/c1553be2-8424-45bc-9c5e-6bee1afa70d4" />
+
+* Lo que se debe hacer es abrir cada uno de los ficheros en conflicto, y navegar hasta las secciones problemáticas, como se ve en la siguiente imagen:
+
+<img width="799" height="225" alt="Screenshot from 2025-10-12 15-01-05" src="https://github.com/user-attachments/assets/55d5389d-80d6-4ed9-8bea-0e592bd3b779" />
+
+Como se puede ver, hay varios botones disponibles en la parte superior. Los que nos interesan son: "Accept Current Change" para aceptar lo que ya estaba, o "Accept Incoming Change" para aceptar el cambio que vino del upstream. Se marca la que se desea conservar, y se guarda el archivo en File -> Save.
+
+* Una vez resuelto el archivo, se debe ejecutar `git add archivo`. Se repite este proceso de revision con todos los ficheros problemáticos, y se ejecuta `git add` por cada uno.
+
+Nota: si hay demasiados conflictos en un solo archivo, y únicamente interesa la versión que viene del upstream, se puede optar por descargar esta version desde el repositorio original y reemplazarla por la antigua. Asi nos evitamos tener que seleccionar muchas veces la opcion "Accept Incoming Change".
+
+Una vez resuelto todo, hay que continuar el merge con `git merge --continue`.
+Despues, se hacen las respectivas pruebas para ver si el branch funciona adecuadamente, y una vez comprobado que sí, se combinan esos cambios en la rama utb:
+* `git switch utb`
+* `git merge prueba`
+* `git push`
+
 
 License
 -------
