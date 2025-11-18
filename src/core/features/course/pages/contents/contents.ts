@@ -68,7 +68,7 @@ import { CoreSharedModule } from '@/core/shared.module';
 })
 export default class CoreCourseContentsPage implements OnInit, OnDestroy, CoreRefreshContext {
 
-    readonly content = viewChild(IonContent);
+    readonly content = viewChild.required(IonContent);
     readonly formatComponent = viewChild(CoreCourseFormatComponent);
 
     course!: CoreCourseAnyCourseData;
@@ -95,6 +95,10 @@ export default class CoreCourseContentsPage implements OnInit, OnDestroy, CoreRe
 
     @HostBinding('attr.data-course-id') protected get courseId(): number | null {
         return this.course?.id ?? null;
+    }
+
+    @HostBinding('attr.data-category-id') protected get courseCategoryId(): number | null {
+        return this.course?.categoryid ?? null;
     }
 
     /**
