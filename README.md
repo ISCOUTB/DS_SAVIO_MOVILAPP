@@ -48,17 +48,16 @@ Si hay algun error con las versiones de los paquetes, actualizarlos con: `npm up
 Actualizar la rama del fork con los commits del repositorio original
 ===========================
 
-Para realizar esta acción pueden darse dos casos:
-
-## Caso 1: No hay conflictos
-En este caso, lo único que hay que hacer es, desde la interfaz de GitHub, hacer clic sobre "Sync Fork" y después en "Update Branch". Al hacerlo, se hará un merge instantáneo de los commits del upstream (repositorio original) en el fork.
+Para sincronizar manualmente el fork, lo único que hay que hacer es, desde la interfaz de GitHub, hacer clic sobre "Sync Fork" y después en "Update Branch". Al hacerlo, se hará un merge instantáneo de los commits del upstream (repositorio original) en el fork.
 
 <img width="818" height="316" alt="syncfork" src="https://github.com/user-attachments/assets/ad82feb0-d066-45eb-9bfb-dec5479aa681" />
 
-## Caso 2: Hay conflictos que solucionar
-Si al hacer clic sobre "Sync Fork" aparece un mensaje "This branch has conflicts that must be resolved" significa que algunos commits del upstream están haciendo conflicto con los del fork, por lo que es necesario especificar como se debe llevar a cabo el merge. En este caso, la única solución posible es usar la consola de comandos junto con el editor de código.
+Cabe destacar que en la rama "main" se programó un **workflow** con el cual se sincronizan semanalmente tanto la rama main de este fork como la rama utb. De esta forma, cada domingo a las 00:00 se traerán los commits nuevos del repositorio original (upstream) a estas ramas. Los commits realizados mediante el workflow aparecen realizados por `github-actions[bot]`. Leer la siguiente sección.
 
-Los pasos para resolver el conflicto en Visual Studio Code fueron los siguientes:
+## Solucionar conflictos entre commits
+Si al intentar sincronizar manualmente aparece un mensaje "This branch has conflicts that must be resolved", o cuando el workflow falla, significa que algunos commits del upstream están haciendo conflicto con los del fork, por lo que es necesario especificar como se debe llevar a cabo el merge. En este caso, la única solución posible es usar la consola de comandos junto con el editor de código.
+
+Los pasos para resolver el conflicto en Visual Studio Code son los siguientes:
 
 * Primero, creamos un branch de prueba, para probar el merge antes de llevarlo al branch: `git checkout -b prueba utb`
 * A continuación, se obtienen los cambios hechos en el repositorio original: `git pull https://github.com/moodlehq/moodleapp main --no-rebase`
@@ -83,6 +82,7 @@ Despues, se hacen las respectivas pruebas para ver si el branch funciona adecuad
 * `git merge prueba`
 * `git push`
 
+Ahora se puede borrar la rama prueba.
 
 License
 -------
