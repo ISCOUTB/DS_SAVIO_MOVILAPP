@@ -52,7 +52,7 @@ Para sincronizar manualmente el fork, lo único que hay que hacer es, desde la i
 
 <img width="818" height="316" alt="syncfork" src="https://github.com/user-attachments/assets/ad82feb0-d066-45eb-9bfb-dec5479aa681" />
 
-Cabe destacar que en la rama "main" se programó un **workflow** con el cual se sincronizan semanalmente tanto la rama main de este fork como la rama utb. De esta forma, cada domingo a las 00:00 se traerán los commits nuevos del repositorio original (upstream) a estas ramas. Los commits realizados mediante el workflow aparecen realizados por `github-actions[bot]`. Leer la siguiente sección.
+Cabe destacar que en la rama "main" se programó un **action** llamado **Sync upstream weekly** con el cual se sincronizan semanalmente tanto la rama main de este fork como la rama utb. De esta forma, cada domingo a las 00:00 se traerán los commits nuevos del repositorio original (upstream) a estas ramas. Los commits realizados mediante el workflow aparecen realizados por `github-actions[bot]`. Leer la siguiente sección.
 
 ## Solucionar conflictos entre commits
 Si al intentar sincronizar manualmente aparece un mensaje "This branch has conflicts that must be resolved", o cuando el workflow falla, significa que algunos commits del upstream están haciendo conflicto con los del fork, por lo que es necesario especificar como se debe llevar a cabo el merge. En este caso, la única solución posible es usar la consola de comandos junto con el editor de código.
