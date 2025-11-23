@@ -17,6 +17,17 @@
 @import "theme.custom";
 @import "theme.base";
 
+// Fondo solo para la pantalla de login
+.core-login-form, .core-login-info-box, .core-login-methods, .core-login-sign-up, .core-login-site {
+	position: relative;
+	z-index: 1;
+}
+
+ion-content.login-bg {
+	background: url('/assets/img/login-bg-utb.jpeg') repeat;
+	background-size: cover;
+}
+
 /* Components */
 @import "components/language";
 @import "components/collapsible-header";

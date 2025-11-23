@@ -112,7 +112,7 @@ export default class CoreLoginCredentialsPage implements OnInit, OnDestroy {
             this.site = CoreSitesFactory.makeUnauthenticatedSite(siteUrl, this.siteConfig);
             this.urlToOpen = CoreNavigator.getRouteParam('urlToOpen');
             this.supportConfig = this.siteConfig && new CoreUserGuestSupportConfig(this.site, this.siteConfig);
-            this.displaySiteUrl = this.site.shouldDisplayInformativeLinks();
+            this.displaySiteUrl = false;
         } catch (error) {
             CoreAlerts.showError(error);
 

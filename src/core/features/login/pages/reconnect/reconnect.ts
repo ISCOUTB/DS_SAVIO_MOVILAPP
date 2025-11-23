@@ -148,7 +148,7 @@ export default class CoreLoginReconnectPage implements OnInit, OnDestroy {
                 loggedOut: true, // Not used.
             };
 
-            this.displaySiteUrl = this.site.shouldDisplayInformativeLinks();
+            this.displaySiteUrl = false;
             this.username = this.site.infos.username;
             this.supportConfig = new CoreUserAuthenticatedSupportConfig(this.site);
 
