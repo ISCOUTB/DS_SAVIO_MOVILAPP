@@ -1,7 +1,9 @@
 Savio App
 =================
 
-Savio App es la aplicación móvil oficial de la Universidad Tecnológica de Bolívar (UTB), desarrollada sobre la base de la plataforma Moodle. La aplicación permite recibir notificaciones en tiempo real sobre entregas, eventos y novedades académicas.
+Savio App es la aplicación móvil oficial de la Universidad Tecnológica de Bolívar (UTB), desarrollada sobre la base de la aplicación móvil original de Moodle. La aplicación tiene una interfaz que usa los colores de la identidad institucional, y permite recibir notificaciones en tiempo real sobre entregas, eventos y novedades académicas.
+
+Además, puede ser instalada coexistiendo con la aplicación original de Moodle, ya que se cambió el nombre de paquete de Android a `com.utb.savioapp` para que el sistema la reconozca como una aplicación diferente.
 
 * [Universidad Tecnologica de Bolivar](https://www.utb.edu.co/)
 * [Proyecto original](https://github.com/moodlehq/moodleapp)
@@ -23,7 +25,7 @@ Configuración del entorno de compilación:
 * Configurar la version a usar de nodeJs: `nvm use lts/jod`
 * Instalar todos los paquetes con: `npm install`
   * Por si acaso, ejecutar `npx ionic`, y presionar la tecla y para aceptar su instalacion
-* Instalar Android Studio y descargar el SDK con las platform tools, las build tools y command line tools. Opcionalmente, instalar el emulador
+* Instalar Android Studio desde su página web y descargar el SDK con las platform tools, las build tools y command line tools. Opcionalmente, instalar el emulador
 * Crear una variable llamada ANDROID_HOME, y ponerle de valor la ruta del SDK
 * Añadir al PATH las siguientes carpetas que estan dentro del SDK:
   * platform-tools
@@ -32,10 +34,11 @@ Configuración del entorno de compilación:
 * Descargar el JDK 21
   * En Windows, se instala desde: https://download.oracle.com/java/21/latest/jdk-21_windows-x64_bin.exe
   * En Linux, se debe descargar y añadir manualmente la carpeta bin del JDK al PATH
+  * Buscar una version mas reciente de ser necesario. Las pruebas se realizaron con el JDK 21.
 * Crear una variable llamada JAVA_HOME, con la ruta del JDK
-* Descargar gradle: https://gradle.org/next-steps/?version=9.1.0&format=bin. Funciona tanto para Linux como para Windows
+* Descargar Gradle: https://gradle.org/next-steps/?version=9.1.0&format=bin. Funciona tanto para Linux como para Windows. Buscar una version mas reciente de ser necesario. Las pruebas se realizaron con Gradle 9.1.0.
 * Descomprimir el archivo y añadir la carpeta bin al PATH
-* Configurar la memoria máxima que puede usar nodeJs: `echo 'export NODE_OPTIONS="--max-old-space-size=capacity"' >> ~/.bashrc` , donde `capacity` debe ser 4096 mínimo, es decir, 4GB de RAM. Se recomienda el valor de 8192, es decir, 8GB.
+* Configurar la memoria máxima que puede usar nodeJs: `echo 'export NODE_OPTIONS="--max-old-space-size=capacity"' >> ~/.bashrc` , donde `capacity` debe ser `4096` mínimo, es decir, 4GB de RAM. Se recomienda el valor de `8192`, es decir, 8GB.
 * Compilar para Android con `npm run prod:android`
 
 En Windows: se debe usar el git bash, pues en CMD o PowerShell no funcionará el comando de compilación debido a que los scripts de npm usan la sintaxis de bash.
@@ -52,7 +55,7 @@ Para sincronizar manualmente el fork, lo único que hay que hacer es, desde la i
 
 <img width="818" height="316" alt="syncfork" src="https://github.com/user-attachments/assets/ad82feb0-d066-45eb-9bfb-dec5479aa681" />
 
-Cabe destacar que en la rama "main" se programó un **action** llamado **Sync upstream weekly** con el cual se sincronizan semanalmente tanto la rama main de este fork como la rama utb. De esta forma, cada domingo a las 00:00 se traerán los commits nuevos del repositorio original (upstream) a estas ramas. Los commits realizados mediante el workflow aparecen realizados por `github-actions[bot]`. Leer la siguiente sección.
+Cabe destacar que en la rama "main" se programó un **action** llamado **Sync upstream weekly** con el cual se sincronizan semanalmente tanto la rama main de este fork como la rama utb. De esta forma, cada domingo a las 00:00 UTC se traerán los commits nuevos del repositorio original (upstream) a estas ramas. Los commits realizados mediante el workflow aparecen realizados por `github-actions[bot]`. Leer la siguiente sección.
 
 ## Solucionar conflictos entre commits
 Si al intentar sincronizar manualmente aparece un mensaje "This branch has conflicts that must be resolved", o cuando el workflow falla, significa que algunos commits del upstream están haciendo conflicto con los del fork, por lo que es necesario especificar como se debe llevar a cabo el merge. En este caso, la única solución posible es usar la consola de comandos junto con el editor de código.
@@ -74,7 +77,7 @@ Como se puede ver, hay varios botones disponibles en la parte superior. Los que 
 
 * Una vez resuelto el archivo, se debe ejecutar `git add archivo`. Se repite este proceso de revision con todos los ficheros problemáticos, y se ejecuta `git add` por cada uno.
 
-Nota: si hay demasiados conflictos en un solo archivo, y únicamente interesa la versión que viene del upstream, se puede optar por descargar esta version desde el repositorio original y reemplazarla por la antigua. Asi nos evitamos tener que seleccionar muchas veces la opcion "Accept Incoming Change".
+Nota: si hay demasiados conflictos en un solo archivo, y únicamente interesa una de las versiones, se puede optar por descargar dicha version desde el repositorio original y reemplazarla. Asi nos evitamos tener que seleccionar muchas veces la opcion "Accept Incoming Change" o "Accept Current Change".
 
 Una vez resuelto todo, hay que continuar el merge con `git merge --continue`.
 Despues, se hacen las respectivas pruebas para ver si el branch funciona adecuadamente, y una vez comprobado que sí, se combinan esos cambios en la rama utb:
